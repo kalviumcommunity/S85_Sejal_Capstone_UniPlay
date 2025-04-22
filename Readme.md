@@ -58,7 +58,7 @@ Since you created the repo manually, here’s how you can set up everything loca
 ### 1. Initialize Git and link remote:
 ```bash
 git init
-git remote add origin https://github.com/your-username/uniplay.git
+git remote add origin https://github.com/kalviumcommunity/S85_Sejal_Capstone_UniPlay.git
 ```
 
 ### 2. Create project structure:
