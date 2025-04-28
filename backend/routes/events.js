@@ -1,4 +1,4 @@
-// backend/routes/events.js
+// In routes/events.js
 
 const express = require('express');
 const router = express.Router();
@@ -8,15 +8,12 @@ const Event = require('../models/Event');
 router.get('/', async (req, res) => {
   try {
     const events = await Event.find();
+
+    // Normalize whitespace in the event data before sending it back to the client
     const sanitizedEvents = events.map(event => {
-      // Sanitizing any spaces in name or date formatting
-      if (event.name) {
-        event.name = event.name.replace(/\s+/g, ' ').trim();
-      }
-      
-      if (event.date && event.date instanceof Date) {
-        event.date = event.date.toISOString();
-      }
+      // Normalize event name and event date (if applicable)
+      event.name = event.name.replace(/\s+/g, ' ').trim();  // Normalize whitespace in event name
+      event.date = event.date.replace(/\s+/g, ' ').trim();  // Normalize whitespace in event date (if applicable)
 
       return event;
     });
@@ -28,4 +25,3 @@ router.get('/', async (req, res) => {
 });
 
 module.exports = router;
-
