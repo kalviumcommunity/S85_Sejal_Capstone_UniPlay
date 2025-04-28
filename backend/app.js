@@ -1,24 +1,22 @@
-// app.js
+// backend/app.js
 
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
-const headerValidation = require('./middleware/headerValidation'); // Import middleware
+const headerValidation = require('./middleware/headerValidation');  // For header validation
 
 const app = express();
 const PORT = process.env.PORT || 5020;
 
 // Middleware
-app.use(cors());
-app.use(express.json());
-
-// Apply the headerValidation middleware globally
-app.use(headerValidation);
+app.use(cors());  // Allow all origins; for production, restrict origins.
+app.use(express.json());  // Parse JSON requests
+app.use(headerValidation); // Custom middleware for header validation
 
 // Routes
-const eventRoutes = require('./routes/events');
-app.use('/api/events', eventRoutes);
+const eventRoutes = require('./routes/events');  // Import event routes
+app.use('/api/events', eventRoutes);  // All routes under '/api/events'
 
 // Test route
 app.get('/', (req, res) => {
@@ -37,3 +35,4 @@ mongoose.connect(process.env.MONGO_URI, {
   });
 })
 .catch(err => console.log(err));
+

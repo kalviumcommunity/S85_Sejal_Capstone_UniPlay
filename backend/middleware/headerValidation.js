@@ -1,29 +1,18 @@
-// middleware/headerValidation.js
+// backend/middleware/headerValidation.js
 
-module.exports = (req, res, next) => {
-    const forwardedFor = req.headers['x-forwarded-for'];
+module.exports = function headerValidation(req, res, next) {
+    // Get the IP from the header or from the request
+    const ip = req.header('X-Forwarded-For') || req.connection.remoteAddress;
   
-    if (forwardedFor) {
-      // Split the forwarded IP chain into an array
-      let ipList = forwardedFor.split(',').map(ip => ip.trim()); // Trim spaces
+    // Allow localhost (127.0.0.1 or ::1) and other trusted local IPs
+    const trustedIps = ['::ffff:127.0.0.1', '127.0.0.1', '::1'];  // Add any other trusted IPs here
   
-      // Reverse the list to ensure the client IP is first (if necessary)
-      ipList = ipList.reverse(); // Reverse the list to correct order
+    console.log("Request IP:", ip);  // Debug log to see the IP
   
-      // Get the first IP (the real client's IP, which should be first after reversing)
-      const clientIp = ipList[0];
-  
-      console.log('Client IP:', clientIp);
-  
-      // Optionally, validate against trusted proxies
-      const trustedProxies = ['trusted-proxy-ip']; // Replace with your trusted proxy IPs
-      if (trustedProxies.includes(clientIp)) {
-        next(); // Proceed if the IP is trusted
-      } else {
-        res.status(403).send('Forbidden'); // Reject if the IP is not trusted
-      }
-    } else {
-      next(); // If no X-Forwarded-For header, proceed normally
+    if (!trustedIps.includes(ip)) {
+      return res.status(403).json({ message: 'Forbidden: IP not trusted' });
     }
+  
+    next();  // Proceed to the next middleware or route handler
   };
   
